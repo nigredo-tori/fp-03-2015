@@ -90,6 +90,9 @@ csv2db csv = csvData2Db <$> parseCsv csv
 db2csv :: BugDB -> TL.Text
 db2csv = writeCsv . db2CsvData
 
+emptyField :: TL.Text
+emptyField = "-"
+
 text2BugInfoParser :: AP.Parser BugInfo
 text2BugInfoParser = 
     BugInfo <$> name
@@ -140,7 +143,7 @@ csvData2Db (header:rest) =
     mconcat $ do
       row <- rest
       let (countryId:valueFields) = row
-      (bugId, s) <- filter (("" /=) . snd) $ zip bugIds valueFields
+      (bugId, s) <- filter ((emptyField /=) . snd) $ zip bugIds valueFields
       return $ singleton bugId (singleton countryId s)
         where (_:bugIds) = header
 
@@ -150,7 +153,7 @@ db2CsvData db = header:rest
           dbList = toList db
           countryIds = nub $ concatMap (keys . snd) dbList
           rest = map restRow countryIds
-          restRow countryId = countryId : map (HS.lookupDefault "" countryId . snd) dbList
+          restRow countryId = countryId : map (HS.lookupDefault emptyField countryId . snd) dbList
 
 -- IO helpers
 

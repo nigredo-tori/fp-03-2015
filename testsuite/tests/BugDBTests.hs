@@ -45,7 +45,7 @@ prop_csvGenerationAndParsingIsIdentity (ReadableBugDB db) =
   let csv = db2csv db
       parseResult = csv2db csv
       result = Right db == parseResult in
-  counterexample ("Failed case's parsed csv: "
+  printTestCase ("Failed case's parsed csv: "
                   ++ show (parseCsv csv) 
                   ++ "\nGenerated csv: " ++ show (db2CsvData db)
                   ++ "\nParse result: " ++ show parseResult
